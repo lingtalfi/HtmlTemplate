@@ -3,11 +3,14 @@ HtmlTemplate
 2016-01-31
 
 
-A simple template system using jquery.
+A simple template system to work with jquery.
 
 
 
 htmltemplate can be installed as a [planet](https://github.com/lingtalfi/Observer/blob/master/article/article.planetReference.eng.md).
+
+
+jquery is a dependency.
 
 
 
