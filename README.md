@@ -84,7 +84,7 @@ Then call it from your page.
                 }
             ];
 
-
+            // the line below will parse the template /libs/htmltemplate/demo/templates/person.htpl (if not already in memory...)
             htpl.loadTemplate('person.htpl', function () {
                 for (var i in rows) {
                     $('#container').append(htpl.getHtml(rows[i]));
