@@ -10,30 +10,52 @@ function HtmlTemplate(options) {
 
     var loadedTpls = {};
 
-    var currentTemplate = null;
-
-
-    this.loadTemplate = function (t, fnLoaded) {
-        if (t in loadedTpls) {
-            currentTemplate = t;
-            fnLoaded && fnLoaded();
+    /**
+     * map:templates, array of alias => template relative path
+     */
+    this.loadTemplates = function (templates, fnLoaded) {
+        var n = 0;
+        for (var i in templates) {
+            n++;
         }
-        else{
-            fetchTemplate(t, function(content){
-                currentTemplate = t;
-                loadedTpls[t] = content;
-                fnLoaded && fnLoaded();
-            });
+
+        function decrementAndFire() {
+            n--;
+            if (0 === n) {
+                fnLoaded();
+            }
+        }
+
+        for (var alias in templates) {
+            loadTemplate(alias, templates[alias], decrementAndFire);
         }
     };
 
-    this.getHtml = function (data) {
-        if(currentTemplate in loadedTpls){
-            var raw = loadedTpls[currentTemplate];
-            return injectData(raw, data);
+
+    /**
+     * str:tplAlias
+     */
+    this.getHtml = function (data, tpl, dataType) {
+        if (tpl in loadedTpls) {
+
+            var raw = loadedTpls[tpl];
+            dataType = dataType || 'map';
+
+            switch (dataType) {
+                case 'map':
+                    return processMap(raw, data);
+                    break;
+                case 'rows':
+                    return processRows(raw, data);
+                    break;
+                default:
+                    devError("Invalid dataType: " + dataType);
+                    return "";
+                    break;
+            }
         }
-        else{
-            devError("Template not loaded: " + currentTemplate);
+        else {
+            devError("Template not loaded: " + tpl);
             return "";
         }
     };
@@ -50,14 +72,34 @@ function HtmlTemplate(options) {
             devError("template not set");
         }
     }
-    
-    function injectData(raw, data){
-        for(var name in data){
+
+    function processMap(raw, data) {
+        for (var name in data) {
             var value = data[name];
             var reg = new RegExp('\\$' + name, 'g');
             raw = raw.replace(reg, value);
         }
         return raw;
+    }
+
+    function processRows(raw, data) {
+        var s = '';
+        for (var i in data) {
+            s += processMap(raw, data[i]);
+        }
+        return s;
+    }
+
+    function loadTemplate(alias, relativePath, fnLoaded) {
+        if (alias in loadedTpls) {
+            fnLoaded && fnLoaded();
+        }
+        else {
+            fetchTemplate(relativePath, function (content) {
+                loadedTpls[alias] = content;
+                fnLoaded && fnLoaded();
+            });
+        }
     }
 
     function devError(m) {

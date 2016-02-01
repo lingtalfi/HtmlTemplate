@@ -18,7 +18,7 @@ jquery is a dependency.
 Features
 ------------
 
-- lightweight (70 lines of code)
+- lightweight (less than 150 lines of code)
 - simple placeholder replacement system
 - well organized workflow
 
@@ -47,10 +47,10 @@ Then call it from your page.
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8"/>
-    <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-    <script src="/libs/htmltemplate/js/htmltemplate.js"></script>
-    <title>Html page</title>
+	<meta charset="utf-8"/>
+	<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="/libs/htmltemplate/js/htmltemplate.js"></script>
+	<title>Html page</title>
 </head>
 
 <body>
@@ -61,39 +61,38 @@ Then call it from your page.
 
 
 <script>
-    (function ($) {
-        $(document).ready(function () {
+	(function ($) {
+		$(document).ready(function () {
 
-            var htpl = new HtmlTemplate({
-                // the default value for dir is /templates, but for this demo I changed it
-                dir: "/libs/htmltemplate/demo/templates"
-            });
-
-
-            // imagine we get rows from a call to an ajax service
-            var rows = [
-                {
-                    id: 6,
-                    name: "marie",
-                    value: "haberton"
-                },
-                {
-                    id: 7,
-                    name: "pierre",
-                    value: "samuel"
-                }
-            ];
-
-            // the line below will parse the template /libs/htmltemplate/demo/templates/person.htpl (if not already in memory...)
-            htpl.loadTemplate('person.htpl', function () {
-                for (var i in rows) {
-                    $('#container').append(htpl.getHtml(rows[i]));
-                }
-            });
+			var htpl = new HtmlTemplate({
+				// the default value for dir is /templates, but for this demo I changed it
+				dir: "/libs/htmltemplate/demo/templates"
+			});
 
 
-        });
-    })(jQuery);
+			// we need to load all our templates first
+			htpl.loadTemplates({
+				person: "person.htpl"
+			}, function () {
+
+
+
+
+				// imagine we get rows from a call to an ajax service
+				var personInfo = {
+					id: 6,
+					name: "marie",
+					value: "haberton"
+				};
+
+
+				// inject the rows using default mode (called map mode)
+				$('#container').append(htpl.getHtml(personInfo, 'person'));
+
+
+			});
+		});
+	})(jQuery);
 </script>
 
 
@@ -108,10 +107,36 @@ How does it work?
 
 There is a template directory which contains all your html templates.
 
-Then, when you need to use a template, use the loadTemplate method.
+Then, at the beginning of your code, call all the templates you are going to use on the page, using the loadTemplates method.
+This method loads all the selected templates in memory, so that you don't have to worry about async problems then. 
 
-Once the template is loaded, you can use the getHtml method, which injects data in your template 
+Note that you can choose meaningful/handy aliases to refer to your templates later in your code.
+
+
+Once the templates are loaded, you can use the getHtml method, which injects data in a template of your choice,
 and returns the resulting string.
+
+The getHtml method works like this:
+
+
+```abap
+str:html    getHtml ( mixed:data, str:templateAlias, str|null:dataType=map )
+```
+
+
+
+### dataTypes
+
+Using the dataType argument, you can change how the data is being treated.
+The default dataType is "map", which allows you to pass a map of place holders.
+
+If you are working with rows though, there is a "rows" mode, which accepts a rows array directly.
+
+The available data types are:
+
+- map: handle a map (javascript associative array)
+- rows: array of maps
+
 
 
 ### html templates notation
@@ -123,6 +148,10 @@ That's all there is to it, for now.
 
 History Log
 ------------------
+    
+- 2.0.0 -- 2016-02-01
+
+    - moved loadTemplate to loadTemplates to get rid of async problems
     
 - 1.0.0 -- 2016-01-31
 
