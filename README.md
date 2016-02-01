@@ -145,6 +145,140 @@ To create a placeholder, prefix it with the dollar ($) symbol.
 That's all there is to it, for now.
 
 
+Other examples
+-------------------
+
+The examples are available in the [demos](https://github.com/lingtalfi/HtmlTemplate/tree/master/www/libs/htmltemplate/demo).
+
+### rows mode 
+
+Here is how you would use the rows mode:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="/libs/htmltemplate/js/htmltemplate.js"></script>
+	<title>Html page</title>
+</head>
+
+<body>
+
+<div id="container">
+
+</div>
+
+
+<script>
+	(function ($) {
+		$(document).ready(function () {
+			var htpl = new HtmlTemplate({
+				// the default value for dir is /templates, but for this demo I changed it
+				dir: "/libs/htmltemplate/demo/templates"
+			});
+			// we need to load all our templates first
+			htpl.loadTemplates({
+				person: "person.htpl"
+			}, function () {
+				// imagine we get rows from a call to an ajax service
+				var rows = [
+					{
+						id: 6,
+						name: "marie",
+						value: "haberton"
+					},
+					{
+						id: 7,
+						name: "pierre",
+						value: "samuel"
+					}
+				];
+				// inject the rows using rows mode
+				$('#container').append(htpl.getHtml(rows, 'person', 'rows'));
+			});
+		});
+	})(jQuery);
+</script>
+
+
+</body>
+</html>
+```
+
+
+
+### mixing modes
+
+Here is how you would mix map mode and rows mode.
+Beside the "person template", there is another container template which contains the following:
+
+```html
+<div class="container">$persons</div>
+```
+
+Then the html code looks like this:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"/>
+	<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+	<script src="/libs/htmltemplate/js/htmltemplate.js"></script>
+	<title>Html page</title>
+</head>
+
+<body>
+
+<div id="container">
+
+</div>
+
+
+<script>
+	(function ($) {
+		$(document).ready(function () {
+			var htpl = new HtmlTemplate({
+				// the default value for dir is /templates, but for this demo I changed it
+				dir: "/libs/htmltemplate/demo/templates"
+			});
+			// we need to load all our templates first
+			htpl.loadTemplates({
+				person: "person.htpl",
+				container: "container.htpl"
+			}, function () {
+				// imagine we get rows from a call to an ajax service
+				var rows = [
+					{
+						id: 6,
+						name: "marie",
+						value: "haberton"
+					},
+					{
+						id: 7,
+						name: "pierre",
+						value: "samuel"
+					}
+				];
+				// inject the rows using default mode (called map mode)
+				$('#container').append(htpl.getHtml({persons: htpl.getHtml(rows, 'person', 'rows')}, 'container'));
+			});
+		});
+	})(jQuery);
+</script>
+
+
+</body>
+</html>
+```
+
+
+
+
+
+
 
 History Log
 ------------------
