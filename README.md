@@ -64,11 +64,7 @@ Then call it from your page.
 	(function ($) {
 		$(document).ready(function () {
 
-			var htpl = new HtmlTemplate({
-				// the default value for dir is /templates, but for this demo I changed it
-				dir: "/libs/htmltemplate/demo/templates"
-			});
-
+			htpl.dir = "/libs/htmltemplate/demo/templates"; // usually, you won't need this line, that's just because the demo has non default needs
 
 			// we need to load all our templates first
 			htpl.loadTemplates({
@@ -106,43 +102,65 @@ How does it work?
 ---------------------
 
 There is a template directory which contains all your html templates.
+You load them once at the beginning of your page, then you can use them when needed.
 
-Then, at the beginning of your code, call all the templates you are going to use on the page, using the loadTemplates method.
-This method loads all the selected templates in memory, so that you don't have to worry about async problems then. 
-
-Note that you can choose meaningful/handy aliases to refer to your templates later in your code.
-
-
-Once the templates are loaded, you can use the getHtml method, which injects data in a template of your choice,
-and returns the resulting string.
-
-The getHtml method works like this:
+To load the templates, we use the loadTemplates method.
+To use a template, we use the getHtml method.
 
 
-```abap
-str:html    getHtml ( mixed:data, str:templateAlias, str|null:dataType=map )
+
+Methods
+----------
+
+### loadTemplates
+
+```js
+/**
+ * 
+ * Load the given templates and execute the given callback.
+ * 
+ * 
+ * @param templates - map, the templates to load. 
+ *                          It's an array of alias => template relative url
+ * @param fnLoaded - callback, the callback to execute once the templates are ready.                          
+ *                          
+ */
+loadTemplates: function (templates, fnLoaded);
+```
+
+
+### getHtml
+
+```js
+/**
+ * Inject data in the given template, using the given method.
+ * 
+ * @param data - mixed, the data to inject into the template, can be of any type,
+ *                      works along with the dataType parameter.
+ * @param tpl - string, the alias of the template to use
+ * @param dataType - string, represents the method used to inject the data into the template,
+ *                          can be one of:
+ *                          
+ *                              - map (default), assumes that the data is a simple map of properties,
+ *                                              which keys are the name of the placeholders (placeholders are used
+ *                                              in the template),
+ *                                              and which values are the values to replace them with.
+ *                                              
+ *                              - rows, assumes that the data is an array of map (as described above).
+ * 
+ * 
+ */
+getHtml: function (data, tpl, dataType);
 ```
 
 
 
-### dataTypes
+html templates notation
+----------------------------
 
-Using the dataType argument, you can change how the data is being treated.
-The default dataType is "map", which allows you to pass a map of place holders.
+To create a placeholder, prefix it with the dollar ($) symbol.
+That's all there is to it, really.
 
-If you are working with rows though, there is a "rows" mode, which accepts a rows array directly.
-
-The available data types are:
-
-- map: handle a map (javascript associative array)
-- rows: array of maps
-
-
-
-### html templates notation
-
-To create a placeholder, prefix it with the dollar ($) symbol. 
-That's all there is to it, for now.
 
 
 Other examples
@@ -174,14 +192,17 @@ Here is how you would use the rows mode:
 <script>
 	(function ($) {
 		$(document).ready(function () {
-			var htpl = new HtmlTemplate({
-				// the default value for dir is /templates, but for this demo I changed it
-				dir: "/libs/htmltemplate/demo/templates"
-			});
+
+			htpl.dir = "/libs/htmltemplate/demo/templates"; // usually, you won't need this line, that's just because the demo has non default needs
+
 			// we need to load all our templates first
 			htpl.loadTemplates({
 				person: "person.htpl"
 			}, function () {
+
+
+
+
 				// imagine we get rows from a call to an ajax service
 				var rows = [
 					{
@@ -195,8 +216,12 @@ Here is how you would use the rows mode:
 						value: "samuel"
 					}
 				];
+
+
 				// inject the rows using rows mode
 				$('#container').append(htpl.getHtml(rows, 'person', 'rows'));
+
+
 			});
 		});
 	})(jQuery);
@@ -240,15 +265,18 @@ Then the html code looks like this:
 <script>
 	(function ($) {
 		$(document).ready(function () {
-			var htpl = new HtmlTemplate({
-				// the default value for dir is /templates, but for this demo I changed it
-				dir: "/libs/htmltemplate/demo/templates"
-			});
+
+			htpl.dir = "/libs/htmltemplate/demo/templates"; // usually, you won't need this line, that's just because the demo has non default needs
+
 			// we need to load all our templates first
 			htpl.loadTemplates({
 				person: "person.htpl",
 				container: "container.htpl"
 			}, function () {
+
+
+
+
 				// imagine we get rows from a call to an ajax service
 				var rows = [
 					{
@@ -262,8 +290,12 @@ Then the html code looks like this:
 						value: "samuel"
 					}
 				];
+
+
 				// inject the rows using default mode (called map mode)
 				$('#container').append(htpl.getHtml({persons: htpl.getHtml(rows, 'person', 'rows')}, 'container'));
+
+
 			});
 		});
 	})(jQuery);
@@ -282,6 +314,10 @@ Then the html code looks like this:
 
 History Log
 ------------------
+    
+- 3.0.0 -- 2016-02-02
+
+    - the library is now static, and the object is htpl
     
 - 2.0.0 -- 2016-02-01
 

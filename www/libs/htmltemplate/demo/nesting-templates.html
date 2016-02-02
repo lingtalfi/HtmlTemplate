@@ -18,11 +18,7 @@
 	(function ($) {
 		$(document).ready(function () {
 
-			var htpl = new HtmlTemplate({
-				// the default value for dir is /templates, but for this demo I changed it
-				dir: "/libs/htmltemplate/demo/templates"
-			});
-
+			htpl.dir = "/libs/htmltemplate/demo/templates"; // usually, you won't need this line, that's just because the demo has non default needs
 
 			// we need to load all our templates first
 			htpl.loadTemplates({
