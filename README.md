@@ -308,6 +308,10 @@ Then the html code looks like this:
 
 
 
+Related
+-----------
+
+- [phptemplate](https://github.com/lingtalfi/PhpTemplate): a simple template system for static code 
 
 
 
