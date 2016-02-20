@@ -18,7 +18,7 @@ jquery is a dependency.
 Features
 ------------
 
-- lightweight (less than 150 lines of code)
+- lightweight (less than 250 lines of code, including generous comments)
 - simple placeholder replacement system
 - well organized workflow
 
@@ -147,11 +147,143 @@ loadTemplates: function (templates, fnLoaded);
  *                                              and which values are the values to replace them with.
  *                                              
  *                              - rows, assumes that the data is an array of map (as described above).
- * 
+ *                              - list, assumes that the data is an array or array object.
+ *                                              Your template can use the $key and $value placeholders to 
+ *                                              access each array key and/or value.
+ *                                              You can specify the separator (extra arg) between elements.
+ *                                              The default separator is an empty string.
  * 
  */
 getHtml: function (data, tpl, dataType);
 ```
+
+
+
+### getListIf
+
+Added in 3.1.0.
+
+
+```js
+/**
+ * Check if the $key is in the $map, and if so,
+ * return the html of a list.
+ * The list is created using the template referred by the $listTplAlias alias,
+ * and every item of the list uses the template referred by the $itemTplAlias alias.
+ *
+ * The list separator is $sep.
+ * The list template must include the "$list" placeholder.
+ *
+ * If the $key is NOT in the $map, this method returns an empty string.
+ *
+ *
+ *
+ *
+ * Note: This is a shorthand method based on personal experience.
+ * See the documentation examples to see when it makes sense to use it.
+ *
+ */
+getListIf: function (key, map, listTplAlias, itemTplAlias, sep);
+```
+
+#### How to use:
+
+Please see the [getListIf demo](https://github.com/lingtalfi/HtmlTemplate/blob/master/www/libs/htmltemplate/demo/create-list-if.html) file. 
+
+Basically, it's useful when you want a template like this,
+where the colors and sports section should only be displayed IF thery are provided in a given array of data (map).
+
+```html
+<div id="container">
+	Hello, my name is Roger.<br>
+	<div class="colors">
+		My favourite colours are:
+		<ul>
+			<li>blue</li>
+			<li>green</li>
+			<li>red</li>
+		</ul>
+	</div>
+	<div class="sports">
+		My favourite sports are:
+		<ul>
+			<li>karate</li>
+			<li>judo</li>
+			<li>kung-fu</li>
+		</ul>
+	</div>
+
+</div>
+```
+
+Then you divide your content into templates, so that your main template looks like this:
+
+
+
+```html
+<div id="container">
+	Hello, my name is Roger.<br>
+	$colors
+	$sports
+</div>
+```
+
+
+Run the demo to see how it's done.
+
+
+
+
+### map2List
+
+Added in 3.1.0.
+
+Note: if you are concerned with the separation of design and code, you can 
+use the equivalent getHtml method with the "list" dataType.
+
+
+```js
+/**
+ *
+ * Return string.
+ *
+ * Call the callback on each element of the map,
+ * concatenate all output to a string
+ * using the given separator between each element,
+ * and return the result.
+ *
+ *
+ * @param map - a map
+ * @param fn - callback
+ *      string       callback ( key, value )
+ *
+ * @param sep - string=''
+ *
+ *
+ *
+ */
+map2List: function (map, fn, sep);
+```
+
+Example:
+
+```js
+// ...
+
+var navLinks = {
+    home: "Welcome",
+    products: "Products",
+    contact: "Contact",
+    blog: "Blog",
+    about_me: "About me"
+};
+
+jMyTpl.find('.nav').html(htpl.utils.map2List(navLinks, function(k, v){
+    return '<a data-id="'+ k +'" href="#">'+ v +'</a>';
+}));
+
+```
+
 
 
 
@@ -318,6 +450,13 @@ Related
 
 History Log
 ------------------
+    
+- 3.1.0 -- 2016-02-19
+
+    - add utils.map2List
+    - add list dataType to the getHtml method
+    - add utils.getListIf
+    
     
 - 3.0.0 -- 2016-02-02
 
