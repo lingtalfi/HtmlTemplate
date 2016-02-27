@@ -451,6 +451,11 @@ Related
 History Log
 ------------------
     
+- 3.2.0 -- 2016-02-27
+
+    - update devError method: now throws exception
+    
+    
 - 3.1.0 -- 2016-02-19
 
     - add utils.map2List

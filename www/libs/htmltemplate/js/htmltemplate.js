@@ -214,7 +214,7 @@
     }
 
     function devError(m) {
-        alert("htmltemplate devError: " + m);
+        throw new Error(m);
     }
 
 })();
