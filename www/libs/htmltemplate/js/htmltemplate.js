@@ -2,7 +2,7 @@
 
 
     /**
-     * Internal cache, array of tplAlias => tplRelUrl
+     * Internal cache, array of tplAlias => tplContent
      */
 
     var loadedTpls = {};
@@ -21,23 +21,56 @@
          * @param templates - map, the templates to load.
          *                          It's an array of alias => template relative url
          * @param fnLoaded - callback, the callback to execute once the templates are ready.
+         * @param staticContainerId - undefined|string, the css id of a (hidden) div containing the static templates.
+         *                                  If this string is undefined, htpl will attempt to fetch the templates via http.
+         *                                  If this string is defined, htpl will search in the html document (no http requests)
+         *
+         *
          *
          */
-        loadTemplates: function (templates, fnLoaded) {
-            var n = 0;
-            for (var i in templates) {
-                n++;
-            }
+        loadTemplates: function (templates, fnLoaded, staticContainerId) {
+            if ('undefined' === typeof staticContainerId) {
 
-            function decrementAndFire() {
-                n--;
-                if (0 === n) {
-                    fnLoaded();
+                var n = 0;
+                for (var i in templates) {
+                    n++;
+                }
+
+                function decrementAndFire() {
+                    n--;
+                    if (0 === n) {
+                        fnLoaded();
+                    }
+                }
+
+                for (var alias in templates) {
+                    loadTemplate(alias, templates[alias], decrementAndFire);
                 }
             }
+            else {
 
-            for (var alias in templates) {
-                loadTemplate(alias, templates[alias], decrementAndFire);
+                var dContainer = document.querySelector('#' + staticContainerId);
+                if (null !== dContainer) {
+                    var hasError = false;
+                    for (var alias in templates) {
+                        var relPath = templates[alias];
+                        var dTpl = dContainer.querySelector('[data-id="' + relPath + '"]');
+                        if (null !== dTpl) {
+                            loadedTpls[alias] = dTpl.innerHTML;
+                        }
+                        else {
+                            hasError = true;
+                            devError('static template not found with data-id=' + relPath);
+                        }
+                    }
+
+                    if (false === hasError) {
+                        fnLoaded();
+                    }
+                }
+                else {
+                    devError('static templates container not found: #' + staticContainerId);
+                }
             }
         },
         /**
@@ -132,9 +165,6 @@
              *      string       callback ( key, value )
              *
              * @param sep - string=''
-             *
-             *
-             *
              */
             map2List: function (map, fn, sep) {
                 var s = "";
@@ -216,7 +246,4 @@
     function devError(m) {
         throw new Error(m);
     }
-
 })();
-
-

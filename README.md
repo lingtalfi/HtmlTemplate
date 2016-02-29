@@ -14,13 +14,14 @@ jquery is a dependency.
 
 
 
-
 Features
 ------------
 
 - lightweight (less than 250 lines of code, including generous comments)
 - simple placeholder replacement system
 - well organized workflow
+- deal with static templates (in the html page) OR dynamic templates (via http requests)
+- uses php7
 
 
 
@@ -107,6 +108,8 @@ You load them once at the beginning of your page, then you can use them when nee
 To load the templates, we use the loadTemplates method.
 To use a template, we use the getHtml method.
 
+Since v3.3.0, the loading can be done statically to reduce a lot of http requests to 0 http requests.
+
 
 
 Methods
@@ -123,9 +126,11 @@ Methods
  * @param templates - map, the templates to load. 
  *                          It's an array of alias => template relative url
  * @param fnLoaded - callback, the callback to execute once the templates are ready.                          
- *                          
+ * @param staticContainerId - undefined|string, the css id of a (hidden) div containing the static templates.
+ *                                  If this string is undefined, htpl will attempt to fetch the templates via http.
+ *                                  If this string is defined, htpl will search in the html document (no http requests)               
  */
-loadTemplates: function (templates, fnLoaded);
+loadTemplates: function (templates, fnLoaded, staticContainerId);
 ```
 
 
@@ -440,6 +445,83 @@ Then the html code looks like this:
 
 
 
+The static loading example
+------------------------------
+
+So you've read that making a lot of http requests is bad.
+No worries, since v3.3.0 htpl can also load templates included in your html page (0 http request).
+Here is how it's done:
+
+```php
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="/libs/htmltemplate/js/htmltemplate.js"></script>
+    <title>Html page</title>
+</head>
+
+<body>
+
+<pre>
+    If you have a lot of templates, it's probably better that you load the html templates statically,
+    because then you don't need to use http requests (which take some time).
+    
+    This demo shows how to do it.
+    We basically create a hidden div in which we write all our html templates.
+    Then, we tell htpl to search the templates in that div, using the third argument of the loadTemplates method.
+    
+</pre>
+<div id="container">
+
+</div>
+<div id="html_templates" style="display: none">
+    <?php
+    use HtmlTemplate\HtmlTemplate;
+
+    require_once "bigbang.php"; // start the local universe (https://github.com/lingtalfi/TheScientist/blob/master/convention.portableAutoloader.eng.md)
+
+    HtmlTemplate::$templateDir = __DIR__ . "/libs/htmltemplate/demo/templates";
+    HtmlTemplate::writeTemplates('person.htpl');
+    ?>
+</div>
+
+<script>
+    (function ($) {
+        $(document).ready(function () {
+
+            htpl.dir = "/libs/htmltemplate/demo/templates"; // usually, you won't need this line, that's just because the demo has non default needs
+
+            // we need to load all our templates first
+            htpl.loadTemplates({
+                person: "person.htpl"
+            }, function () {
+
+
+
+
+                // imagine we get rows from a call to an ajax service
+                var personInfo = {
+                    id: 6,
+                    name: "marie",
+                    value: "haberton"
+                };
+
+
+                // inject the rows using default mode (called map mode)
+                $('#container').append(htpl.getHtml(personInfo, 'person'));
+
+
+            }, 'html_templates');
+        });
+    })(jQuery);
+</script>
+</body>
+</html>
+```
+
+
 Related
 -----------
 
@@ -450,6 +532,10 @@ Related
 
 History Log
 ------------------
+    
+- 3.3.0 -- 2016-02-29
+
+    - add static loading technique
     
 - 3.2.0 -- 2016-02-27
 
