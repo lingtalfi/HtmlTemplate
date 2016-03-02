@@ -452,8 +452,18 @@ So you've read that making a lot of http requests is bad.
 No worries, since v3.3.0 htpl can also load templates included in your html page (0 http request).
 Here is how it's done:
 
+  
+    
+    
+
 ```php
-<!DOCTYPE html>
+<?php
+
+use HtmlTemplate\HtmlTemplate;
+require_once "bigbang.php"; // start the local universe (https://github.com/lingtalfi/TheScientist/blob/master/convention.portableAutoloader.eng.md)
+HtmlTemplate::$templateDir = __DIR__ . "/libs/htmltemplate/demo/templates"; 
+
+?><!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8"/>
@@ -464,28 +474,8 @@ Here is how it's done:
 
 <body>
 
-<pre>
-    If you have a lot of templates, it's probably better that you load the html templates statically,
-    because then you don't need to use http requests (which take some time).
-    
-    This demo shows how to do it.
-    We basically create a hidden div in which we write all our html templates.
-    Then, we tell htpl to search the templates in that div, using the third argument of the loadTemplates method.
-    
-</pre>
-<div id="container">
-
-</div>
-<div id="html_templates" style="display: none">
-    <?php
-    use HtmlTemplate\HtmlTemplate;
-
-    require_once "bigbang.php"; // start the local universe (https://github.com/lingtalfi/TheScientist/blob/master/convention.portableAutoloader.eng.md)
-
-    HtmlTemplate::$templateDir = __DIR__ . "/libs/htmltemplate/demo/templates";
-    HtmlTemplate::writeTemplates('person.htpl');
-    ?>
-</div>
+<div id="container"></div>
+<div id="html_templates" style="display: none"><?php HtmlTemplate::writeTemplates('person.htpl');?></div>
 
 <script>
     (function ($) {
