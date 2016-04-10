@@ -57,20 +57,25 @@ class HtmlTemplate
     }
 
 
-    public static function writeTemplates(string $subDirOrFile = '', bool $recursive = true)
+    public static function writeTemplates($subDirOrFile = '', bool $recursive = true)
     {
-        $target = self::$templateDir . "/" . $subDirOrFile;
-        if (is_dir($target)) {
-            $files = YorgDirScannerTool::getFilesWithExtension($target, self::$templateExtension, false, $recursive);
-            foreach ($files as $file) {
-                self::printTarget($file);
+        if (!is_array($subDirOrFile)) {
+            $subDirOrFile = [$subDirOrFile];
+        }
+        foreach ($subDirOrFile as $_subDirOrFile) {
+            $target = self::$templateDir . "/" . $_subDirOrFile;
+            if (is_dir($target)) {
+                $files = YorgDirScannerTool::getFilesWithExtension($target, self::$templateExtension, false, $recursive);
+                foreach ($files as $file) {
+                    self::printTarget($file);
+                }
             }
-        }
-        elseif (is_file($target)) {
-            self::printTarget($target);
-        }
-        else {
-            trigger_error("Target not found: $target");
+            elseif (is_file($target)) {
+                self::printTarget($target);
+            }
+            else {
+                trigger_error("Target not found: $target");
+            }
         }
     }
 

@@ -523,9 +523,15 @@ Related
 History Log
 ------------------
     
+- 3.4.0 -- 2016-03-24
+
+    - HtmlTemplate::writeTemplates now accepts an array as its first argument
+    
+    
 - 3.3.0 -- 2016-02-29
 
     - add static loading technique
+    
     
 - 3.2.0 -- 2016-02-27
 
