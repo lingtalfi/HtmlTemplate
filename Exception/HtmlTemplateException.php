@@ -1,6 +1,6 @@
 <?php
 
-namespace HtmlTemplate\Exception;
+namespace Ling\HtmlTemplate\Exception;
 
 /*
  * LingTalfi 2016-02-29

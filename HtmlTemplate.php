@@ -1,14 +1,14 @@
 <?php
 
-namespace HtmlTemplate;
+namespace Ling\HtmlTemplate;
 
 /*
  * LingTalfi 2016-02-29
  */
 
 
-use DirScanner\YorgDirScannerTool;
-use HtmlTemplate\Exception\HtmlTemplateException;
+use Ling\DirScanner\YorgDirScannerTool;
+use Ling\HtmlTemplate\Exception\HtmlTemplateException;
 
 class HtmlTemplate
 {

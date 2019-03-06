@@ -1,6 +1,6 @@
 <?php
 
-use HtmlTemplate\HtmlTemplate;
+use Ling\HtmlTemplate\HtmlTemplate;
 require_once "bigbang.php"; // start the local universe (https://github.com/lingtalfi/TheScientist/blob/master/convention.portableAutoloader.eng.md)
 HtmlTemplate::$templateDir = __DIR__ . "/libs/htmltemplate/demo/templates";
 

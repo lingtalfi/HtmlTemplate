@@ -16,7 +16,7 @@ Install
 
 Using the [uni tool](https://github.com/lingtalfi/universe-naive-importer)
 ```bash
-uni import HtmlTemplate
+uni import Ling/HtmlTemplate
 ```
 
 
@@ -471,7 +471,7 @@ Here is how it's done:
 ```php
 <?php
 
-use HtmlTemplate\HtmlTemplate;
+use Ling\HtmlTemplate\HtmlTemplate;
 require_once "bigbang.php"; // start the local universe (https://github.com/lingtalfi/TheScientist/blob/master/convention.portableAutoloader.eng.md)
 HtmlTemplate::$templateDir = __DIR__ . "/libs/htmltemplate/demo/templates"; 
 
