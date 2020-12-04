@@ -534,7 +534,11 @@ Related
 
 History Log
 ------------------
-    
+
+- 3.4.1 -- 2020-12-04
+
+    - Add lpi-deps.byml file
+
 - 3.4.0 -- 2016-03-24
 
     - HtmlTemplate::writeTemplates now accepts an array as its first argument
